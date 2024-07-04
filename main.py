@@ -2,48 +2,59 @@ import pyautogui
 import keyboard
 import time
 
-USERNAME = 'Your Name'
+USERNAME = 'Username'
 
+def log_action(action):
+    print(f"Performing action: {action}")
 
 def give_item(item):
+    log_action(f"give {USERNAME} {item}")
     pyautogui.write(f"give {USERNAME} {item}")
+    keyboard.press_and_release("enter")
 
+def open_menu():
+    log_action("Opening menu with ` key")
+    keyboard.press_and_release('`')
 
 def give_glider():
-    pyautogui.press("`")
-    time.sleep(0.1)
+    open_menu()
+    time.sleep(0.01)
     give_item("Glider")
-    pyautogui.press("enter")
-    time.sleep(0.1)
-    pyautogui.press("`")
-
+    open_menu()
 
 def give_gun_setup():
-    pyautogui.press("`")
-    time.sleep(0.1)
+    open_menu()
+    time.sleep(0.01)
     give_item("Sword")
     time.sleep(0.1)
-    give_item("Forcefield_launcher")
-    time.sleep(0.1)
+    give_item("ForcefieldLauncher")
+    time.sleep(0.2)
     give_item("Pistol")
-    time.sleep(0.1)
+    time.sleep(0.2)
     give_item("AK47")
-    pyautogui.press("`")
+    time.sleep(0.2)
+    pyautogui.write("vehicleCollisions off")
+    open_menu()
 
+def stop_train():
+    open_menu()
+    time.sleep(0.01)
+    pyautogui.write("trainspeed 0")
+    keyboard.press_and_release("enter")
+    open_menu()
 
 hotkeys = {
     'g': give_glider,
     'k': give_gun_setup,
+    'p': stop_train,
     # TODO:
     # - Sword macro
-    # - Movement of invite
-    # - Trainstop
+
 }
 
 for hotkey, func in hotkeys.items():
     keyboard.add_hotkey(hotkey, func)
 
-
 # keepalive
 while True:
-    time.sleep(1)
+    time.sleep(0.01)
