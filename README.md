@@ -1,5 +1,17 @@
 # JBUtils
-A macro utility for Roblox Jailbreak, this script is primarily useful for private server owners or users with op privileges. It allows you to rapidly obtain a glider or a basic loadout for grinding with a single hotkey press. This script also lets you exploit a glitch with the sword item, giving you a significant speed boost by rapidly selecting, deselecting, and using it.
+A macro utility for Roblox Jailbreak, this script is primarily useful for private server owners or users with op privileges. 
+
+It allows you to rapidly obtain a glider or a basic loadout for grinding with a single hotkey press. 
+
+This script also lets you exploit a glitch with the sword item, giving you a significant speed boost by rapidly selecting, deselecting, and using it.
+
+Edit `items_to_give.txt` with your preferred gun setup.
+
+Change your keybinds in main.py, current keybinds:
+- F2: Give yourself a glider
+- F5: Give out your gun setup
+- F8: Stop the train
+- F1: Toggle on/off the sword macro
 
 ## Prerequisites
 - Python 3.6+ on your system

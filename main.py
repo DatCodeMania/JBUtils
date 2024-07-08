@@ -11,16 +11,38 @@ env_path = Path('.env')
 if env_path.exists():
     load_dotenv()
 else:
-    print(".env file not found. Please create a .env file with your ROBLOX_USERNAME.")
+    print(".env file not found. Please create a .env file with your "
+          "ROBLOX_USERNAME.")
     exit(1)
 
 USERNAME = os.getenv("ROBLOX_USERNAME")
 if not USERNAME or USERNAME == "YOUR_USERNAME":
-    print("Invalid ROBLOX_USERNAME. Please set your username in the .env file.")
+    print("Invalid ROBLOX_USERNAME. Please set your username in the "
+          ".env file.")
     exit(1)
 
 sword_macro_running = False
 sword_macro_thread = None
+
+
+def read_items_to_give(user):
+    items = []
+    items_file = Path('items_to_give.txt')
+    if items_file.exists():
+        with open(items_file, 'r') as file:
+            for line in file:
+                parts = line.strip().split(':')
+                if len(parts) == 2:
+                    target_user, item = parts
+                    target_user = target_user.strip()
+                    item = item.strip()
+                else:
+                    target_user = USERNAME
+                    item = parts[0].strip()
+
+                if target_user == user:
+                    items.append(item)
+    return items
 
 
 def give_item(item):
@@ -42,14 +64,10 @@ def give_glider():
 def give_gun_setup():
     open_menu()
     time.sleep(0.01)
-    give_item("Sword")
-    time.sleep(0.1)
-    give_item("ForcefieldLauncher")
-    time.sleep(0.2)
-    give_item("Pistol")
-    time.sleep(0.2)
-    give_item("AK47")
-    time.sleep(0.2)
+    items = read_items_to_give(USERNAME)
+    for item in items:
+        give_item(item)
+        time.sleep(0.2)
     pyautogui.write("vehicleCollisions off")
     open_menu()
 
@@ -65,6 +83,7 @@ def stop_train():
 def sword_use():
     keyboard.press_and_release("1")
     pyautogui.click()
+    time.sleep(0.05)
     keyboard.press_and_release("1")
 
 
@@ -87,16 +106,20 @@ def sword_macro():
 
 
 hotkeys = {
-    "g": give_glider,
-    "k": give_gun_setup,
-    "p": stop_train,
-    "b": sword_macro,
+    "F2": give_glider,
+    "F5": give_gun_setup,
+    "F8": stop_train,
+    "F1": sword_macro,
 }
 
 
 def main():
-    for hotkey, func in hotkeys.items():
-        keyboard.add_hotkey(hotkey, func)
+    def hotkey_handler(event):
+        if event.name in hotkeys:
+            hotkeys[event.name]()
+
+    for hotkey in hotkeys:
+        keyboard.hook_key(hotkey, hotkey_handler)
 
     # Keepalive
     while True:
