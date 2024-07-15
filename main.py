@@ -25,8 +25,8 @@ sword_macro_running = False
 sword_macro_thread = None
 
 
-def read_items_to_give(user):
-    items = []
+def read_items_to_give():
+    items = {}
     items_file = Path('items_to_give.txt')
     if items_file.exists():
         with open(items_file, 'r') as file:
@@ -40,13 +40,16 @@ def read_items_to_give(user):
                     target_user = USERNAME
                     item = parts[0].strip()
 
-                if target_user == user:
-                    items.append(item)
+                if not target_user == "ExampleUser":
+                    if target_user in items:
+                        items[target_user].append(item)
+                    else:
+                        items[target_user] = [item]
     return items
 
 
-def give_item(item):
-    pyautogui.write(f"give {USERNAME} {item}")
+def give_item(target_user, item):
+    pyautogui.write(f"give {target_user} {item}")
     keyboard.press_and_release("enter")
 
 
@@ -57,17 +60,25 @@ def open_menu():
 def give_glider():
     open_menu()
     time.sleep(0.01)
-    give_item("Glider")
+    give_item(USERNAME, "Glider")
+    items_file = Path('glider_extra_users.txt')
+    if items_file.exists():
+        with open(items_file, 'r') as file:
+            for line in file:
+                if line != "ExampleUser":
+                    time.sleep(0.2)
+                    give_item(line, "Glider")
     open_menu()
 
 
 def give_gun_setup():
     open_menu()
-    time.sleep(0.01)
-    items = read_items_to_give(USERNAME)
-    for item in items:
-        give_item(item)
-        time.sleep(0.2)
+    time.sleep(0.05)
+    items = read_items_to_give()
+    for user, user_items in items.items():
+        for item in user_items:
+            give_item(user, item)
+            time.sleep(0.2)
     pyautogui.write("vehicleCollisions off")
     open_menu()
 
@@ -114,12 +125,8 @@ hotkeys = {
 
 
 def main():
-    def hotkey_handler(event):
-        if event.name in hotkeys:
-            hotkeys[event.name]()
-
-    for hotkey in hotkeys:
-        keyboard.hook_key(hotkey, hotkey_handler)
+    for hotkey, func in hotkeys.items():
+        keyboard.add_hotkey(hotkey, func)
 
     # Keepalive
     while True:

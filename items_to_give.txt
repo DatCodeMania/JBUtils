@@ -3,3 +3,4 @@ ForcefieldLauncher
 Pistol
 AK47
 Glider
+ExampleUser: Pistol
